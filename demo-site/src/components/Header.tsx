@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CHAPTERS, type ChapterId } from "@/story/scenario";
-import { ViewModeToggle } from "./ViewMode";
+import type { Chapter } from "@/story/scenario";
+import { STORIES } from "@/story/stories";
+import { AudienceTabs, useAudience, ViewModeToggle } from "./ViewMode";
 
-function useActiveChapter() {
-  const [active, setActive] = useState<ChapterId | null>(null);
+function useActiveChapter(chapters: Chapter[]) {
+  const [active, setActive] = useState<string | null>(null);
 
   useEffect(() => {
     let ticking = false;
@@ -17,8 +18,8 @@ function useActiveChapter() {
             "--header-h",
           ),
         ) * parseFloat(getComputedStyle(document.documentElement).fontSize);
-      let current: ChapterId | null = null;
-      for (const c of CHAPTERS) {
+      let current: string | null = null;
+      for (const c of chapters) {
         const el = document.getElementById(c.id);
         if (el && el.getBoundingClientRect().top <= headerH + 2) current = c.id;
       }
@@ -37,26 +38,31 @@ function useActiveChapter() {
     measure();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [chapters]);
 
   return active;
 }
 
 export default function Header() {
-  const active = useActiveChapter();
+  const { audience } = useAudience();
+  const chapters = STORIES[audience].chapters;
+  const active = useActiveChapter(chapters);
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-cream/90 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 px-6 lg:h-16 lg:flex-nowrap">
-        <a href="#top" className="flex h-14 items-center font-serif text-lg text-ink lg:h-auto">
-          Huddle
-        </a>
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 px-6 lg:h-16 lg:flex-nowrap">
+        <div className="flex h-14 items-center gap-3 lg:h-auto">
+          <a href="#top" className="font-serif text-lg text-ink">
+            Huddle
+          </a>
+          <AudienceTabs size="sm" />
+        </div>
 
         <nav
           aria-label="Chapters"
           className="no-scrollbar order-3 -mx-6 flex w-[calc(100%+3rem)] items-center gap-1 overflow-x-auto border-t border-line px-6 py-2 lg:order-none lg:mx-0 lg:w-auto lg:border-t-0 lg:p-0"
         >
-          {CHAPTERS.map((c, i) => {
+          {chapters.map((c, i) => {
             const isActive = active === c.id;
             return (
               <a
@@ -80,7 +86,10 @@ export default function Header() {
           })}
         </nav>
 
-        <ViewModeToggle size="sm" />
+        {/* On phones the view toggle lives in the hero, so the header stays two rows. */}
+        <div className="hidden sm:block">
+          <ViewModeToggle size="sm" />
+        </div>
       </div>
     </header>
   );

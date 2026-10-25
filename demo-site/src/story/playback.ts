@@ -1,4 +1,4 @@
-import { CHAPTERS, TYPING_LEAD, type Beat, type ThreadId } from "./scenario";
+import { CHAPTERS, TYPING_LEAD, type Beat, type Chapter, type ThreadId } from "./scenario";
 
 export type Message = {
   key: string;
@@ -51,13 +51,17 @@ export function playBeats(
   return { shown, typing: typing as ThreadId | null, draft };
 }
 
-/** Everything on Shreya's phone at a point in chapter `index`. */
-export function phoneState(index: number, progress: number): PhoneState {
+/** Everything on the phone at a point in chapter `index` of a story (Shreya's by default). */
+export function phoneState(
+  index: number,
+  progress: number,
+  chapters: Chapter[] = CHAPTERS,
+): PhoneState {
   const messages: Message[] = [];
   let typing: ThreadId | null = null;
   let draft = "";
 
-  CHAPTERS.slice(0, index + 1).forEach((c, ci) => {
+  chapters.slice(0, index + 1).forEach((c, ci) => {
     const p = ci < index ? 1 : progress;
     const r = playBeats(c.beats, p, c.id, c.stamp);
     messages.push(...r.shown);
@@ -74,7 +78,7 @@ export function phoneState(index: number, progress: number): PhoneState {
     else if (m.stamp) lastStamp[m.thread] = m.stamp;
   }
 
-  const views = CHAPTERS[index].views;
+  const views = chapters[index].views;
   const view = views
     ? [...views].reverse().find((v) => progress >= v.at)?.view ?? views[0].view
     : "agent";

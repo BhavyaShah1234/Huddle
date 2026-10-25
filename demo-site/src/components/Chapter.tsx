@@ -11,7 +11,9 @@ export default function Chapter({
   index,
   renderPhone,
   renderBehind,
+  phoneLabel = "What Shreya sees",
 }: {
+  phoneLabel?: string;
   chapter: ChapterData;
   index: number;
   renderPhone: (progress: number) => React.ReactNode;
@@ -65,7 +67,7 @@ export default function Chapter({
           >
             <div className="flex min-h-0 flex-col items-center">
               <p className="mb-3 font-sans text-xs font-medium uppercase tracking-wide text-ink-soft">
-                What Shreya sees
+                {phoneLabel}
               </p>
               {renderPhone(progress)}
             </div>

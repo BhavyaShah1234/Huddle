@@ -1,6 +1,7 @@
 "use client";
 
-import { CHAPTERS, THREADS, type ChapterId } from "@/story/scenario";
+import { type ChapterId } from "@/story/scenario";
+import { STORIES } from "@/story/stories";
 import { phoneState } from "@/story/playback";
 import { POD, SWIMMING, INTEREST_COUNT } from "@/story/huddle";
 import Chapter from "./Chapter";
@@ -19,12 +20,29 @@ import {
   PrivacyCard,
   Stats,
 } from "./cards/StudentCards";
+import { ClubNegotiation, DemandPool, EventLive, Heatmap, InviteFanout } from "./cards/ClubCards";
 import { Appear, Panel } from "./cards/ui";
+import { useAudience } from "./ViewMode";
 
-const ONBOARD_TEXT = CHAPTERS[0].beats.find((b) => b.from === "me")!.text;
+const ONBOARD_TEXT = STORIES.student.chapters[0].beats.find((b) => b.from === "me")!.text;
 
-function Behind({ id, p }: { id: ChapterId; p: number }) {
-  switch (id) {
+function Behind({ id, p }: { id: string; p: number }) {
+  switch (id as ChapterId | "club-demand" | "club-plan" | "club-invite" | "club-live") {
+    case "club-demand":
+      return <DemandPool progress={p} />;
+    case "club-plan":
+      return (
+        <div className="flex flex-col gap-3">
+          <Heatmap progress={p} />
+          <Appear on={p >= 0.46}>
+            <ClubNegotiation progress={p} />
+          </Appear>
+        </div>
+      );
+    case "club-invite":
+      return <InviteFanout progress={p} />;
+    case "club-live":
+      return <EventLive progress={p} />;
     case "onboard":
       return (
         <div className="grid grid-cols-1 items-start gap-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
@@ -111,15 +129,19 @@ function Behind({ id, p }: { id: ChapterId; p: number }) {
 }
 
 export default function Chapters() {
+  const { audience } = useAudience();
+  const story = STORIES[audience];
+
   return (
     <>
-      {CHAPTERS.map((c, i) => (
+      {story.chapters.map((c, i) => (
         <Chapter
           key={c.id}
           chapter={c}
           index={i}
+          phoneLabel={story.phoneLabel}
           renderPhone={(p) => {
-            const s = phoneState(i, p);
+            const s = phoneState(i, p, story.chapters);
             return (
               <>
                 <PhoneMock
@@ -127,7 +149,7 @@ export default function Chapters() {
                   messages={s.messages}
                   view={s.view}
                   threads={s.threads}
-                  contacts={THREADS}
+                  contacts={story.contacts}
                   typing={s.typing}
                   draft={s.draft}
                 />

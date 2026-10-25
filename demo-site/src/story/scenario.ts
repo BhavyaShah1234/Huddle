@@ -40,8 +40,10 @@ export type Beat = {
 
 export type PhoneView = { at: number; view: "list" | ThreadId };
 
-export type Chapter = {
-  id: ChapterId;
+export type Contact = { name: string; ini: string; color: string };
+
+export type Chapter<Id extends string = string> = {
+  id: Id;
   label: string;
   /** One-line caption of the stage, shown above the split layout. */
   caption: string;
@@ -56,12 +58,12 @@ export type Chapter = {
   phoneNote?: string;
 };
 
-export const THREADS: Record<ThreadId, { name: string; ini: string; color: string }> = {
+export const THREADS: Record<ThreadId, Contact> = {
   agent: { name: "Huddle agent", ini: "H", color: "#b4603a" },
   mei: { name: "Mei", ini: "M", color: "#5f7f5a" },
 };
 
-export const CHAPTERS: Chapter[] = [
+export const CHAPTERS: Chapter<ChapterId>[] = [
   {
     id: "onboard",
     label: "Onboard",

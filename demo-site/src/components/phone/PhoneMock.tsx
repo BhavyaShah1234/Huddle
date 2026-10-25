@@ -2,9 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { Message } from "@/story/playback";
-import type { ThreadId } from "@/story/scenario";
-
-export type Contact = { name: string; ini: string; color: string };
+import type { Contact, ThreadId } from "@/story/scenario";
 
 function StatusBar({ time = "9:41" }: { time?: string }) {
   return (
