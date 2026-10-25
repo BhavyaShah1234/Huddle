@@ -62,7 +62,7 @@ export default function App() {
             <div className="mark" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round"><path d="M3 15c2.5 0 2.5-6 5-6s2.5 6 5 6 2.5-6 5-6 2.5 3 3 3" /></svg>
             </div>
-            <div><h1>Sidequest</h1><p>Find your people. At your level. When you're all free.</p></div>
+            <div><h1>Huddle</h1><p>Find your people. At your level. When you're all free.</p></div>
           </div>
           <div className="who-am-i">
             <nav className="roles" role="tablist" aria-label="Preview as">
