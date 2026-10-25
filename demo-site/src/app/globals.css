@@ -1,0 +1,446 @@
+@import "tailwindcss";
+
+:root {
+  --color-cream: #f7f3ec;
+  --color-cream-2: #f1ebdf;
+  --color-ink: #2b2621;
+  --color-ink-soft: #5c554c;
+  --color-clay: #b4603a;
+  --color-clay-soft: #e7c9b8;
+  --color-line: #e4dcca;
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+@theme inline {
+  --color-cream: var(--color-cream);
+  --color-cream-2: var(--color-cream-2);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-clay: var(--color-clay);
+  --color-clay-soft: var(--color-clay-soft);
+  --color-line: var(--color-line);
+  --font-serif: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+  --ease-out-strong: var(--ease-out-strong);
+  --ease-in-out-strong: var(--ease-in-out-strong);
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+
+/* Section-level scroll reveal: soft blur-in, fires once via IntersectionObserver in Reveal.tsx. */
+.reveal {
+  opacity: 0;
+  transform: translateY(-8px);
+  filter: blur(4px);
+  transition:
+    opacity 700ms var(--ease-out-strong),
+    transform 700ms var(--ease-out-strong),
+    filter 700ms var(--ease-out-strong);
+}
+.reveal[data-visible] {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Staggered grid/list entrance. Parent gets [data-visible] from Reveal.tsx (variant="group"). */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(8px);
+  filter: blur(3px);
+}
+[data-visible] .stagger-item {
+  animation: stagger-fade-in 400ms var(--ease-out-strong) forwards;
+  animation-delay: calc(var(--stagger-index, 0) * 60ms);
+}
+@keyframes stagger-fade-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Hover-gated micro-interactions — pointer devices only, never on touch. */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift {
+    transition:
+      transform 200ms var(--ease-out-strong),
+      border-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--color-clay) 40%, transparent);
+    box-shadow: 0 12px 28px -16px color-mix(in srgb, var(--color-ink) 30%, transparent);
+  }
+
+  .nav-link {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 200ms var(--ease-out-strong);
+  }
+  .nav-link:hover {
+    background-size: 100% 1px;
+  }
+
+  .btn-hover:hover {
+    transform: translateY(-2px) scale(1.03);
+  }
+}
+
+/* Press feedback ships everywhere (a real touch press, not a hover). */
+.btn-hover {
+  transition:
+    transform 150ms var(--ease-out-strong),
+    background-color 150ms ease;
+}
+.btn-hover:active {
+  transform: scale(0.97);
+}
+
+/* One-time intro curtain — see IntroCurtain.tsx. Skipped entirely under reduced motion. */
+.intro-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-ink);
+  transition: transform 650ms var(--ease-in-out-strong);
+}
+.intro-curtain[data-phase="wipe"] {
+  transform: translateY(-100%);
+}
+
+/* Lenis: recommended setup so native smooth-scroll doesn't fight the library. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Ambient hero motion: outer div drifts continuously, inner div eases toward the pointer. */
+@keyframes blob-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-16px, 12px, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+.hero-blob-ambient {
+  animation: blob-drift 18s var(--ease-in-out-strong) infinite;
+}
+.hero-blob-track {
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at center,
+    var(--color-clay) 0%,
+    transparent 70%
+  );
+  opacity: 0.16;
+  filter: blur(48px);
+  transition: transform 500ms var(--ease-out-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transform: none;
+    filter: none;
+    transition: opacity 200ms ease;
+    opacity: 0;
+  }
+  .reveal[data-visible] {
+    opacity: 1;
+  }
+  .stagger-item {
+    transform: none;
+    filter: none;
+  }
+  [data-visible] .stagger-item {
+    animation: stagger-fade-in-reduced 200ms ease forwards;
+    animation-delay: 0ms;
+  }
+  @keyframes stagger-fade-in-reduced {
+    to {
+      opacity: 1;
+    }
+  }
+  .hover-lift:hover {
+    transform: none;
+  }
+  .btn-hover:hover,
+  .btn-hover:active {
+    transform: none;
+  }
+  .hero-blob-ambient {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Huddle additions. Everything above is copied verbatim from never-miss-a-lead.
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* Sticky header height; pinned chapters sit directly beneath it. */
+  --header-h: 6.5rem;
+  /* Muted status colors that sit inside the cream/clay palette. */
+  --color-conflict: #b4483a;
+  --color-resolved: #5f7f5a;
+}
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 4rem;
+  }
+}
+
+@theme inline {
+  --color-conflict: var(--color-conflict);
+  --color-resolved: var(--color-resolved);
+}
+
+/* Chapter nav: horizontal scroll on narrow screens without a visible scrollbar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   iMessage mockup. The phone is the one place that follows iOS, not the site theme.
+   --------------------------------------------------------------------------- */
+
+.phone {
+  --imsg-blue: #0a84ff;
+  --imsg-grey: #e9e9eb;
+  position: relative;
+  aspect-ratio: 9 / 19.2;
+  border-radius: 2.6rem;
+  background: var(--color-ink);
+  padding: 9px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-ink) 60%, white),
+    0 30px 60px -30px color-mix(in srgb, var(--color-ink) 45%, transparent);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.phone-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 2.05rem;
+  background: #fff;
+}
+.imsg-scroll {
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+}
+.imsg-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.imsg-row {
+  display: flex;
+}
+.imsg-row.me {
+  justify-content: flex-end;
+}
+.imsg-bubble {
+  position: relative;
+  isolation: isolate;
+  max-width: 78%;
+  padding: 6px 11px 7px;
+  border-radius: 17px;
+  font-size: 13px;
+  line-height: 1.32;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.imsg-bubble.me {
+  background: var(--imsg-blue);
+  color: #fff;
+}
+.imsg-bubble.them {
+  background: var(--imsg-grey);
+  color: #000;
+}
+/* iOS tail: a colored curl plus a white mask, only on the last bubble of a run. */
+.imsg-bubble.tail::before,
+.imsg-bubble.tail::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  height: 17px;
+  z-index: -1;
+}
+.imsg-bubble.tail::before {
+  z-index: -2;
+}
+.imsg-bubble.me.tail::before {
+  right: -7px;
+  width: 20px;
+  background: var(--imsg-blue);
+  border-bottom-left-radius: 16px 14px;
+}
+.imsg-bubble.me.tail::after {
+  right: -26px;
+  width: 26px;
+  background: #fff;
+  border-bottom-left-radius: 10px;
+}
+.imsg-bubble.them.tail::before {
+  left: -7px;
+  width: 20px;
+  background: var(--imsg-grey);
+  border-bottom-right-radius: 16px 14px;
+}
+.imsg-bubble.them.tail::after {
+  left: -26px;
+  width: 26px;
+  background: #fff;
+  border-bottom-right-radius: 10px;
+}
+.imsg-share {
+  display: block;
+  margin-top: 6px;
+  padding: 6px 8px;
+  border-radius: 9px;
+  background: #fff;
+  color: #3a3a3c;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10.5px;
+  line-height: 1.45;
+  white-space: pre-line;
+}
+
+/* Typing indicator: three dots pulsing in sequence. */
+.imsg-bubble.typing {
+  display: flex;
+  gap: 4px;
+  padding: 10px 12px;
+}
+.imsg-bubble.typing span {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: #8e8e93;
+  animation: imsg-dot 1.2s ease-in-out infinite;
+}
+.imsg-bubble.typing span:nth-child(2) {
+  animation-delay: 150ms;
+}
+.imsg-bubble.typing span:nth-child(3) {
+  animation-delay: 300ms;
+}
+@keyframes imsg-dot {
+  0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-2px); }
+}
+
+.imsg-caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: -2px;
+  background: var(--imsg-blue);
+  animation: imsg-caret 1s steps(1) infinite;
+}
+@keyframes imsg-caret {
+  50% { opacity: 0; }
+}
+
+/* Bubble entrance: grows from the sender's bottom corner. */
+.imsg-in {
+  animation: imsg-pop 320ms var(--ease-out-strong) both;
+}
+.imsg-row.me .imsg-in {
+  transform-origin: bottom right;
+}
+.imsg-row.them .imsg-in {
+  transform-origin: bottom left;
+}
+@keyframes imsg-pop {
+  from { opacity: 0; transform: scale(0.85) translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.imsg-view {
+  animation: imsg-slide 360ms var(--ease-out-strong) both;
+}
+@keyframes imsg-slide {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: none; }
+}
+.imsg-in-soft {
+  animation: stagger-fade-in 400ms var(--ease-out-strong) both;
+}
+
+/* ---------------------------------------------------------------------------
+   Behind-the-scenes: scroll-driven appear. `data-on` flips as progress passes a beat.
+   --------------------------------------------------------------------------- */
+
+.appear {
+  opacity: 0;
+  transform: translateY(6px);
+  filter: blur(3px);
+  transition:
+    opacity 450ms var(--ease-out-strong),
+    transform 450ms var(--ease-out-strong),
+    filter 450ms var(--ease-out-strong);
+}
+.appear[data-on="true"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.chip {
+  transition:
+    background-color 400ms ease,
+    color 400ms ease,
+    border-color 400ms ease;
+}
+.redact {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-ink) 0 7px,
+    transparent 7px 9px
+  );
+  color: transparent;
+  border-radius: 2px;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imsg-in,
+  .imsg-view,
+  .imsg-in-soft,
+  .imsg-bubble.typing span,
+  .imsg-caret {
+    animation: none;
+  }
+  .appear {
+    transform: none;
+    filter: none;
+    transition: opacity 150ms ease;
+  }
+}
