@@ -52,7 +52,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-line bg-cream/90 backdrop-blur-sm">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 px-6 lg:h-16 lg:flex-nowrap">
         <div className="flex h-14 items-center gap-3 lg:h-auto">
-          <a href="#top" className="font-serif text-lg text-ink">
+          <a href="#page-top" className="font-serif text-lg text-ink">
             Huddle
           </a>
           <AudienceTabs size="sm" />

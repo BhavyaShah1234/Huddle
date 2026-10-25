@@ -216,7 +216,7 @@ export const STUDENT_PHONE_IN = 0.42;
 
 export const CLUB_HERO = {
   eyebrow: "Club view · agent-to-agent coordination",
-  title: "See what students want. Never who, until they say yes.",
+  title: "See what students want.",
   intro:
     "Club officers get an agent in iMessage too. It reads an anonymous pool of what students' agents share, helps plan an event, and sends the invite back through each student's own agent. Names only arrive for students who say yes.",
   hint: "Scroll to follow a DevLabs officer planning DSA night.",
